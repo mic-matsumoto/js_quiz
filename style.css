@@ -7,23 +7,19 @@ body {
     background-color: #f0f0f0;
     margin: 0;
 }
-
 .container {
     text-align: center;
 }
-
 textarea {
     width: 300px;
     height: 100px;
     margin-bottom: 10px;
 }
-
 #output {
     display: flex;
     flex-wrap: wrap;
     margin-top: 10px;
 }
-
 .block {
     background-color: #007bff;
     color: white;
@@ -31,7 +27,9 @@ textarea {
     margin: 5px;
     border-radius: 5px;
 }
-
 .symbol {
     background-color: #ff0000;
+}
+.non-alphabetic {
+    background-color: #ff9900;
 }

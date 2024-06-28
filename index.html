@@ -5,13 +5,146 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text Blocker</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+        margin: 0;
+    }
+    .container {
+        text-align: center;
+    }
+    textarea {
+        width: 300px;
+        height: 100px;
+        margin-bottom: 10px;
+    }
+    #output {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+    .block {
+        background-color: #007bff;
+        color: white;
+        padding: 10px;
+        margin: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .block.dark {
+        background-color: #0056b3;
+    }
+    .symbol {
+        background-color: #ff0000;
+    }
+    .non-alphabetic {
+        background-color: #ff9900;
+    }
+    .hidden {
+        display: none;
+    }
+    .outlined {
+        border: 1px solid black;
+        color: black;
+        background-color: white;
+        padding: 5px;
+        display: inline-block;
+    }
+    </style>
 </head>
 <body>
     <div class="container">
         <textarea id="inputText" placeholder="コードを入力してください"></textarea>
         <button onclick="blockText()">表示</button>
         <div id="output"></div>
+        <button id="okButton" class="hidden" onclick="showOriginalText()">OK</button>
     </div>
-    <script src="script.js"></script>
+    <script>
+    function blockText() {
+        const inputText = document.getElementById('inputText').value;
+        const words = inputText.split(' ').filter(word => word.trim() !== '');
+        const output = document.getElementById('output');
+        output.innerHTML = '';
+
+        words.forEach(word => {
+            const block = document.createElement('div');
+            block.className = 'block';
+
+            if (/^[^\w\s]+$/.test(word)) {
+                block.classList.add('symbol');
+            } else if (/^[^a-zA-Z]+$/.test(word)) {
+                block.classList.add('non-alphabetic');
+            }
+
+            block.textContent = word;
+            block.addEventListener('click', () => {
+                block.classList.toggle('dark');
+            });
+
+            output.appendChild(block);
+        });
+
+        document.getElementById('okButton').classList.remove('hidden');
+    }
+
+    function showOriginalText() {
+        const inputText = document.getElementById('inputText').value;
+        const blocks = document.querySelectorAll('.block');
+        const output = document.getElementById('output');
+        output.innerHTML = '';
+
+        blocks.forEach(block => {
+            const span = document.createElement('span');
+            if (block.classList.contains('dark')) {
+                span.className = 'outlined';
+                span.textContent = ' ';
+            } else {
+                span.textContent = block.textContent + ' ';
+            }
+            output.appendChild(span);
+        });
+
+        const container = document.querySelector('.container');
+        container.innerHTML = `<p>${output.innerHTML}</p>`;
+        const okButton = document.createElement('button');
+        okButton.textContent = 'OK';
+        const retryButton = document.createElement('button');
+        retryButton.textContent = 'やり直す';
+
+        retryButton.addEventListener('click', () => {
+            container.innerHTML = '';
+            const textarea = document.createElement('textarea');
+            textarea.id = 'inputText';
+            textarea.placeholder = 'コードを入力してください';
+            textarea.value = inputText;
+
+            const showButton = document.createElement('button');
+            showButton.textContent = '表示';
+            showButton.addEventListener('click', blockText);
+
+            const outputDiv = document.createElement('div');
+            outputDiv.id = 'output';
+
+            const okBtn = document.createElement('button');
+            okBtn.id = 'okButton';
+            okBtn.className = 'hidden';
+            okBtn.textContent = 'OK';
+            okBtn.addEventListener('click', showOriginalText);
+
+            container.appendChild(textarea);
+            container.appendChild(showButton);
+            container.appendChild(outputDiv);
+            container.appendChild(okBtn);
+        });
+
+        container.appendChild(okButton);
+        container.appendChild(retryButton);
+    }
+    </script>
 </body>
 </html>
